@@ -55,6 +55,8 @@ final_v2_df = final_df.groupby('product_name').agg({
     'revenue_2023': 'sum'
 }).reset_index()
 
-# Save final_df and final_v2_df to CSV files
-final_df.to_csv('final_df.csv', index=False)
+# Save final_v2_df to CSV file
 final_v2_df.to_csv('final_v2_df.csv', index=False)
+
+# Save final_v2_df to JSON file
+final_v2_df.to_json('final_v2_df.json', orient='records')
