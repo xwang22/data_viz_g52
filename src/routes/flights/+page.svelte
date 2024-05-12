@@ -5,6 +5,8 @@
     const rescale = function(x, domain_min, domain_max, range_min, range_max) {
       return ((range_max - range_min)*(x-domain_min))/(domain_max-domain_min) + range_min
     }
+    console.log(data)
+    console.log(data instanceof Array)
   </script>
   
   <style>
