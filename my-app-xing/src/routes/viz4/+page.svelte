@@ -12,12 +12,15 @@
     //change column names
 	let parsed_data = data.viz1.map((d) => {
 	 	return {
+            id: d["id"],
 	 		type: d["Type"],
             account: d["Key Account"],
 	 		revenue: d["ProductPricesInCP_split_23"],
 			growth: d["growth_tot"]
 	 	}
 	 })
+     // sort data according to revenue
+     parsed_data.sort((a, b) => a.revenue - b.revenue);
     // console.log(parsed_data)
 
      // find the unique count of product types and account types
@@ -31,7 +34,7 @@
     // start with a svg
 	 let width = 1200;
 	 let height = 800;
-	 const margins = {top:20, right:50, bottom:100, left: 200};
+	 const margins = {top:50, right:50, bottom:100, left: 200};
 	 const innerWidth = width - margins.left - margins.right;
  	 const innerHeight = height - margins.top - margins.bottom;
 
@@ -64,9 +67,11 @@
 
 	<g transform="translate({margins.left},{margins.top})">
 		{#each parsed_data as d}
-			<circle cx={xScale(d.type)} cy={yScale(d.account)} r={rScale(d.revenue)} fill={colorScale(d.growth)}>
-				<title>My tooltip</title>
-			</circle>
+			<circle cx={xScale(d.type)} cy={yScale(d.account)} r={rScale(d.revenue)} fill={colorScale(d.growth)}
+				class:selected="{selected_datapoint && d.id == selected_datapoint.id}"
+                on:mouseover = {function(event){selected_datapoint = d; setMousePosition(event)}}
+                on:mouseout = {function(){selected_datapoint = undefined}}
+			/>
 		{/each}
 
 		 <!-- X Axis, 30 is the max radius-->
@@ -99,7 +104,7 @@
 					y2={yScale(tick)}
 					stroke="black"
 					/>
-				<text y={yScale(tick)} x = -3, style = "font-size: 9px; alignment-baseline:middle; text-anchor: end; ">
+				<text y={yScale(tick)} x = -3, style = "font-size: 10px; alignment-baseline:middle; text-anchor: end; ">
 				{tick}
 				</text>
 			{/each}
@@ -107,6 +112,15 @@
 		
 	</g>
 </svg>
+
+{#if selected_datapoint!=undefined}
+<div id='tooltip' style = "left: {mouse_x + 10}px; top:{mouse_y-10}px">
+Account: {selected_datapoint.account}<br/>
+Product Type: {selected_datapoint.type}<br/>
+Revenue 2023: {selected_datapoint.revenue}<br/>
+Growth from 2019: {selected_datapoint.growth}
+</div>
+{/if}
 
 <style>
 	svg{
@@ -119,7 +133,7 @@
 	}
     /* define hover format */
     circle.selected{
-        fill:red;
+        fill:black;
         fill-opaciy:1;
     }
     #tooltip{

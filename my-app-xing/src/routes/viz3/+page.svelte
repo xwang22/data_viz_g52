@@ -91,7 +91,7 @@
 					y2={yScale(tick)}
 					stroke="black"
 					/>
-				<text y={yScale(tick)} x = -3, style = "font-size: 9px; alignment-baseline:middle; text-anchor: end; ">
+				<text y={yScale(tick)} x = -3, style = "font-size: 10px; alignment-baseline:middle; text-anchor: end; ">
 				{tick}
 				</text>
 			{/each}
