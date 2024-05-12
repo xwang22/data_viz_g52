@@ -48,6 +48,14 @@
 	 console.log(gExtent);
 	 console.log(colorScale(0.4));
 
+     // record mouse position for hover
+     let selected_datapoint = undefined;
+     let mouse_x,mouse_y;
+     const setMousePosition = function(event){
+        mouse_x = event.clientX;
+        mouse_y = event.clientY;
+     }
+
 </script>
 
 <h1>Revenue per Product Type and Account Type</h1>
@@ -109,5 +117,16 @@
 		fill-opacity: 0.6;
 		stroke: rgba(0,0,0,0.5);
 	}
+    /* define hover format */
+    circle.selected{
+        fill:red;
+        fill-opaciy:1;
+    }
+    #tooltip{
+        position:fixed;
+        background-color: white;
+        padding: 3px;
+        border: solid 1px;
+    }
 
 </style>
