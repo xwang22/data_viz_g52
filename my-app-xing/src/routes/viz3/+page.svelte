@@ -64,7 +64,7 @@
 		 <!-- X Axis, 30 is the max radius-->
 		 <g transform="translate(0, {innerHeight+30})"> 
 			<line x1="0" y1="0" x2={innerWidth} y2="0" stroke="black"/>
-			<text fill="black" x={innerWidth/2} y=50 style = "font-size: 12px; text-anchor: middle;">Product Type</text>
+			<text fill="black" x={innerWidth/2} y=50 style = "font-size: 16px; text-anchor: middle;">Product Type</text>
 			{#each xticks as tick}
 				<line
 					x1={xScale(tick)}
@@ -82,7 +82,7 @@
 		<!-- Y Axis, 30 is the max radius-->
 		<g transform="translate(-30, 0)"> 
 			<line x1="0" y1="0" x2="0" y2={innerHeight+30} stroke="black"/>
-			<text fill="black" x=-{innerHeight/2} y = -100 transform="rotate(-90)" style = "font-size: 12px; text-anchor:middle">Account</text>
+			<text fill="black" x=-{innerHeight/2} y = -100 transform="rotate(-90)" style = "font-size: 16px; text-anchor:middle">Account</text>
 			{#each yticks as tick}
 				<line
 					x1=0

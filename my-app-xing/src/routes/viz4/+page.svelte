@@ -33,7 +33,7 @@
     
     // start with a svg
 	 let width = 1200;
-	 let height = 800;
+	 let height = 850;
 	 const margins = {top:50, right:50, bottom:100, left: 200};
 	 const innerWidth = width - margins.left - margins.right;
  	 const innerHeight = height - margins.top - margins.bottom;
@@ -77,7 +77,7 @@
 		 <!-- X Axis, 30 is the max radius-->
 		 <g transform="translate(0, {innerHeight+30})"> 
 			<line x1="0" y1="0" x2={innerWidth} y2="0" stroke="black"/>
-			<text fill="black" x={innerWidth/2} y=50 style = "font-size: 12px; text-anchor: middle;">Product Type</text>
+			<text fill="black" x={innerWidth/2} y=50 style = "font-size: 16px; text-anchor: middle;">Product Type</text>
 			{#each xticks as tick}
 				<line
 					x1={xScale(tick)}
@@ -86,7 +86,7 @@
 					y2=6
 					stroke="black"
 					/>
-				<text x={xScale(tick)} y = 20 style = "font-size: 9px; text-anchor: middle;">
+				<text x={xScale(tick)} y = 20 style = "font-size: 10px; text-anchor: middle;">
 				{tick}
 				</text>
 			{/each}
@@ -95,7 +95,7 @@
 		<!-- Y Axis, 30 is the max radius-->
 		<g transform="translate(-30, 0)"> 
 			<line x1="0" y1="0" x2="0" y2={innerHeight+30} stroke="black"/>
-			<text fill="black" x=-{innerHeight/2} y = -100 transform="rotate(-90)" style = "font-size: 12px; text-anchor:middle">Account</text>
+			<text fill="black" x=-{innerHeight/2} y = -100 transform="rotate(-90)" style = "font-size: 16px; text-anchor:middle">Account</text>
 			{#each yticks as tick}
 				<line
 					x1=0
@@ -104,7 +104,7 @@
 					y2={yScale(tick)}
 					stroke="black"
 					/>
-				<text y={yScale(tick)} x = -3, style = "font-size: 10px; alignment-baseline:middle; text-anchor: end; ">
+				<text y={yScale(tick)} x = -3, style = "font-size: 12px; alignment-baseline:middle; text-anchor: end; ">
 				{tick}
 				</text>
 			{/each}
