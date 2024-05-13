@@ -4,6 +4,7 @@
     <li> <a href="viz2/">viz2 </li>
     <li> <a href="viz3/">viz3 </li>
     <li> <a href="viz4/">viz4 </li>
+    <li> <a href="viz5/">viz5 </li>
 
 </ul>
 
