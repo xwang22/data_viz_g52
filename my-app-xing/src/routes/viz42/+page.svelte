@@ -8,9 +8,8 @@
     import { interpolateRdYlGn } from 'd3-scale-chromatic';
 	import { axisBottom } from 'd3-axis';
 
-    //console.log(data)
-    //change column names
-	let parsed_data = data.viz1.map((d) => {
+    //==================================Start importing region level data==================================
+    let parsed_data_reg = data.viz1_region.map((d) => {
 	 	return {
             id: d["id"],
 	 		type: d["Type"],
@@ -21,33 +20,21 @@
 			region: d["Region"]
 	 	}
 	 })
-     // sort data according to revenue
-     parsed_data.sort((a, b) => a.revenue - b.revenue);
 
-     // find the unique count of product types and account types
-     let productypes = [... new Set(parsed_data.map((d) => d.type))];
-     let acounts = [... new Set(parsed_data.map((d) => d.account))];
-
-     let rExtent = extent(parsed_data, (d)=> d.revenue);
-     let gExtent =extent(parsed_data, (d)=> d.growth);
-     //console.log(rExtent);
-	 //console.log(parsed_data);
-    
-// Start of Preprocessing based on Region Selection ===================================
-// Get all unique regions
-let regions = [...new Set(parsed_data.map(item => item.region))];
-
+// allow region selection
+let regions = [...new Set(parsed_data_reg.map(item => item.region))];
 let selectedRegion = "Select All"; // Default to "Select All"
 
+//groupby type and account after region selection
 let groupedData = []; // initialize groupedData
 
 // Filter and group data based on the selected region
 $: {
 	// Drop the growth column
-    let dataWithoutGrowth = parsed_data.map(({ growth, ...rest }) => rest);
-
+    let dataWithoutGrowth = parsed_data_reg.map(({ growth, ...rest }) => rest); 
+    // filter for region based on selection
     let filteredData = selectedRegion === "Select All" ? dataWithoutGrowth : dataWithoutGrowth.filter(entry => entry.region === selectedRegion);
-
+    // group by type and account
     let groupedData = filteredData.reduce((result, entry) => {
         const { type, account, revenue, revenue_19} = entry;
         const index = result.findIndex(item => item.type === type && item.account === account);
@@ -63,22 +50,43 @@ $: {
         } else {
             result[index].revenue += revenue;
             result[index].revenue_19 += revenue_19;
-            result[index].growth = result[index].revenue / result[index].revenue_19 -1 ;
+            result[index].growth = result[index].revenue / result[index].revenue_19 - 1;
         }
 
         return result;
     }, []);
-
+    // add the id column, drop the revenue_19 column
 	groupedData = groupedData.map(({ revenue_19, ...rest }, index) => ({ id: index + 1, ...rest }));
+
+    // sort data according to revenue
+    groupedData.sort((a, b) => a.revenue - b.revenue);
 
     console.log(groupedData); // Log groupedData after it's updated
 }
-// End of Preprocessing based on Region Selection ===================================
+    //==================================End importing region level data==================================
 
+    //change column names
+	let parsed_data = data.viz1.map((d) => {
+	 	return {
+            id: d["id"],
+	 		type: d["Type"],
+            account: d["Key Account"],
+	 		revenue: d["ProductPricesInCP_split_23"],
+			growth: d["growth_tot"]
+	 	}
+	 })
+     // sort data according to revenue
+     parsed_data.sort((a, b) => a.revenue - b.revenue);
+    console.log(parsed_data)
 
+     // find the unique count of product types and account types
+     let productypes = [... new Set(parsed_data.map((d) => d.type))];
+     let acounts = [... new Set(parsed_data.map((d) => d.account))];
 
-
-
+     let rExtent = extent(parsed_data, (d)=> d.revenue);
+     let gExtent =extent(parsed_data, (d)=> d.growth);
+     //console.log(rExtent);
+    
     // start with a svg
 	 let width = 1200;
 	 let height = 850;
@@ -111,18 +119,10 @@ $: {
 
 <h1>Revenue per Product Type and Account Type</h1>
 
-<select bind:value={selectedRegion}>
-    <option>Select All</option>
-    {#each regions as region (region)}
-        <option>{region}</option>
-    {/each}
-</select>
-  
-
 <svg {width} {height}>
 
 	<g transform="translate({margins.left},{margins.top})">
-		{#each groupedData as d}
+		{#each parsed_data as d}
 			<circle cx={xScale(d.type)} cy={yScale(d.account)} r={rScale(d.revenue)} fill={colorScale(d.growth)}
 				class:selected="{selected_datapoint && d.id == selected_datapoint.id}"
                 on:mouseover = {function(event){selected_datapoint = d; setMousePosition(event)}}
