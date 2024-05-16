@@ -24,6 +24,9 @@
         // Select the first n products
         let bestProducts = sortedProducts.slice(0, n);
 
+        // Calculate total revenue for the given year
+		let total = filteredProducts.reduce((acc, product) => acc + (product[`revenue_${year}`] || 0), 0);
+
         let otherRevenue = 0;
         let otherQuantity = 0;        
 
@@ -77,7 +80,7 @@
 	const inner_width = width - margin.left - margin.right;
 	const inner_height = height - margin.top - margin.bottom;
 	// Also, we need to know how large the bars are
-	const bar_width = 150;
+	const bar_width = width / 8;
 	// And how far they are from each other
 	const bar_distance = (inner_width - bar_width * 5)/4;
 		
@@ -89,11 +92,6 @@
 	const calculateX = (margin, year, bar_width, bar_distance) => {
 		return margin.left + (year-2019) * (bar_width + bar_distance)
 	}
-
-    // Function to calculate the height of each bar
-    const calculateHeight = (bp) => {
-        return rescale(bp.revenue, total, inner_height);
-    };
 
     // Create a list of custom colors
     const customColors = [
@@ -138,21 +136,27 @@
     function updateVisualization(){
         // Construct SVG for the current year
         let newstackedBarsHTML = `<svg width="${width}" height="${height}" class="translated" transform="translate(${margin.left}, ${margin.top})">`;
-        // Re-initialize the value of total
-        total = 0;
+        //Re-initialize total
+        let total = 0;
+        
+        const years4total = [2019, 2020, 2021, 2022, 2023];
+        years4total.forEach(year4total => {
+            
+            // Filter and select products for the current year
+            const bestProducts = filterAndSelectProducts(typeselection, data, year4total, n, includeOther);            
+            // Calculate total revenue for the current year
+            let yeartotal = bestProducts.reduce((acc, product) => acc + product.revenue, 0);
+            console.log(yeartotal)
+            // Compare with maxTotal and update if necessary
+            if (yeartotal > total) {
+                total = yeartotal;
+            }
+        })
         // Loop through each year and create stacked bars
         const years = [2019, 2020, 2021, 2022, 2023];
         years.forEach(year => {
             // Filter and select products for the current year
             const bestProducts = filterAndSelectProducts(typeselection, data, year, n, includeOther);
-
-            // Calculate total revenue for the current year
-            let yeartotal = bestProducts.reduce((acc, product) => acc + product.revenue, 0);
-
-            // Compare with maxTotal and update if necessary
-            if (yeartotal > total) {
-                total = yeartotal;
-            }
 
             // Loop through each product for the current year
             bestProducts.slice().reverse().forEach((bp, i) => {
@@ -171,15 +175,16 @@
                     }
                 y = margin.top + inner_height - rescale(cumulativeHeight + bp.revenue, total, inner_height);
                 }
-
                 // Construct rect element for the current product
-                const rectHTML = `<rect class="bar" x="${x}" y="${y}" width="${bar_width}" height="${calculateHeight(bp)}" fill="${getColor(bp.product_name)}"
+                const rectHTML = `<rect class="bar" x="${x}" y="${y}" width="${bar_width}" height="${rescale(bp.revenue, total, inner_height)}" fill="${getColor(bp.product_name)}"
                                 data-product_name="${bp.product_name}"
                                 onmouseover="document.getElementById('tooltip').style.opacity='1'; 
                                             document.getElementById('tooltip').innerHTML='${bp.product_name}, ${bp.revenue/1000000} MCP'; 
                                             document.getElementById('tooltip').style.left=event.pageX + 10 + 'px'; 
                                             document.getElementById('tooltip').style.top=event.pageY - 28 + 'px';"
-                                onmouseout="document.getElementById('tooltip').style.opacity='0';"></rect>`;
+                                            this.setAttribute('fill-opacity', 0.5);"                                            
+                                onmouseout="document.getElementById('tooltip').style.opacity='0';
+                                            this.setAttribute('fill-opacity', 1);"></rect>`;
 
                 // Append rect element to SVG HTML
                 newstackedBarsHTML += rectHTML;
