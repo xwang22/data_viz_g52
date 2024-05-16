@@ -5,7 +5,7 @@
     import {scalePoint} from "d3-scale";
     import {scaleSqrt} from "d3-scale";
     import {scaleSequential} from "d3-scale";
-    import { interpolateRdYlGn } from 'd3-scale-chromatic';
+    import { interpolatePiYG } from 'd3-scale-chromatic';
 	import { axisBottom } from 'd3-axis';
 
     //==================================Start importing region level data==================================
@@ -23,7 +23,7 @@
 
 // allow region selection
 let regions = [...new Set(parsed_data_reg.map(item => item.region))];
-let selectedRegion = "Select All"; // Default to "Select All"
+let selectedRegion = "select a region"; // Default selection
 
 //groupby type and account after region selection
 let groupedData = []; // initialize groupedData
@@ -33,7 +33,7 @@ $: {
 	// Drop the growth column
     let dataWithoutGrowth = parsed_data_reg.map(({ growth, ...rest }) => rest); 
     // filter for region based on selection
-    let filteredData = selectedRegion === "Select All" ? dataWithoutGrowth : dataWithoutGrowth.filter(entry => entry.region === selectedRegion);
+    let filteredData = selectedRegion === "select a region" ? dataWithoutGrowth : dataWithoutGrowth.filter(entry => entry.region === selectedRegion);
     // group by type and account
     groupedData = filteredData.reduce((result, entry) => {
         const { type, account, revenue, revenue_19} = entry;
@@ -101,8 +101,8 @@ console.log(groupedData);
 	 let yScale = scalePoint().domain(acounts).range([innerHeight, 0]); 
      let rScale = scaleSqrt().domain(rExtent).range([10,30]); 
      //let colorScale= scaleLinear().domain([-1,1]).range(["red","green"]); 
-     //let colorScale = scaleSequential().domain([-1,1]).interpolator(interpolateRdYlGn); 
-     let colorScale = scaleSequential().domain(gExtent).interpolator(interpolateRdYlGn); 
+     //let colorScale = scaleSequential().domain([-1,1]).interpolator(interpolatePiYG); 
+     let colorScale = scaleSequential().domain(gExtent).interpolator(interpolatePiYG); 
 
      const xticks = productypes;
 	 const yticks = acounts;
@@ -122,7 +122,7 @@ console.log(groupedData);
 <h1>Revenue per Product Type and Account Type</h1>
 
 <select bind:value={selectedRegion}>
-    <option>Select All</option>
+    <option>select a region</option>
     {#each regions as region (region)}
         <option>{region}</option>
     {/each}
@@ -207,5 +207,7 @@ Growth from 2019: {selected_datapoint.growth}
         padding: 3px;
         border: solid 1px;
     }
+    select{position: relative;
+    top: -800px; /* Adjust this value as needed */}
 
 </style>
