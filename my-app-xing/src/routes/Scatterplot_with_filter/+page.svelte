@@ -61,10 +61,14 @@ $: {
     // sort data according to revenue
     groupedData.sort((a, b) => a.revenue - b.revenue);
 
+    // make radius scale based on selection of region
+    rExtent = extent(groupedData, (d)=> d.revenue);
+    rScale = scaleSqrt().domain(rExtent).range([10,30]); 
+
     //console.log(groupedData); // Log groupedData after it's updated
 }
 
-console.log(groupedData);
+//console.log(groupedData);
     //==================================End importing region level data==================================
 
     //change column names
